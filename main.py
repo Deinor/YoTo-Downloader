@@ -1,3 +1,4 @@
+from ast import Break, Pass
 from cProfile import label
 import sys
 from PyQt5.QtWidgets import QMainWindow, QApplication, QWidget, QPushButton, QAction, QLineEdit, QMessageBox, QFileDialog, QLabel
@@ -31,6 +32,7 @@ class App(QMainWindow):
         self.textbox.resize(280, 40)
 
         #Get local dir_path
+        self.dir_path =""
         self.button_file = QPushButton("Select folder", self)
         self.button_file.move(20, 105)
 
@@ -40,9 +42,7 @@ class App(QMainWindow):
 
         #Fce con. button
         self.button_file.clicked.connect(self.click_file)
-        self.button.clicked.connect(self.click)
-
-
+        self.button.clicked.connect(self.click_download)
 
         self.show()
     
@@ -50,14 +50,25 @@ class App(QMainWindow):
         self.dir_path = QFileDialog.getExistingDirectory(self,"Choose Directory","C:\\Users\\deino\\Downloads")
 
     @pyqtSlot()
-    def click (self):
+    def click_download (self):
+
+        #Exceptions - no URL passed
+        if self.textbox.text() == "":
+            QMessageBox.question(self,"Error", "Please insert Youtube URL!", QMessageBox.Ok, QMessageBox.Ok)
+            return
+
+        if self.dir_path == "":
+            QMessageBox.question(self,"Error", "Choose download directory!", QMessageBox.Ok, QMessageBox.Ok)
+            return    
+
         textboxValue = self.textbox.text()
         yt = YouTube(textboxValue)
         yd = yt.streams.get_highest_resolution()
         yd.download(self.dir_path)
         QMessageBox.question(self,"Downloading file", "Downloaded: " + yt.title, QMessageBox.Ok, QMessageBox.Ok)
         self.textbox.setText("")
-
+        print(self.dir_path)
+            
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     ex = App()
