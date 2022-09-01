@@ -1,8 +1,6 @@
-from ast import Break, Pass
-from cProfile import label
 import sys
 from PyQt5.QtWidgets import QMainWindow, QApplication, QWidget, QPushButton, QAction, QLineEdit, QMessageBox, QFileDialog, QLabel
-from PyQt5.QtGui import QIcon, QFont
+from PyQt5.QtGui import QFont
 from PyQt5.QtCore import pyqtSlot
 from pytube import YouTube
 
