@@ -1,5 +1,5 @@
-import sys
-from PyQt5.QtWidgets import QMainWindow, QApplication, QWidget, QPushButton, QAction, QLineEdit, QMessageBox, QFileDialog, QLabel
+import sys, os
+from PyQt5.QtWidgets import QMainWindow, QApplication, QComboBox, QPushButton, QAction, QLineEdit, QMessageBox, QFileDialog, QLabel
 from PyQt5.QtGui import QFont
 from PyQt5.QtCore import pyqtSlot
 from pytube import YouTube
@@ -34,7 +34,14 @@ class App(QMainWindow):
         self.button_file = QPushButton("Select folder", self)
         self.button_file.move(20, 105)
 
-        #Create button in the window
+        #Creates combobox with file formats to chose for download
+        self.list_formats = [f'Audio - MP3', f'Video']
+        self.combo_format = QComboBox(self)
+        self.combo_format.addItems(self.list_formats)
+        self.combo_format.move(200, 105)
+        self.combo_format.resize(100, 28)
+
+         #Create button in the window
         self.button = QPushButton("Download file", self)
         self.button.move(20, 140)
 
@@ -59,11 +66,20 @@ class App(QMainWindow):
             QMessageBox.question(self,"Error", "Choose download directory!", QMessageBox.Ok, QMessageBox.Ok)
             return    
 
-        textboxValue = self.textbox.text()
-        yt = YouTube(textboxValue)
-        yd = yt.streams.get_highest_resolution()
-        yd.download(self.dir_path)
-        QMessageBox.question(self,"Downloading file", "Downloaded: " + yt.title, QMessageBox.Ok, QMessageBox.Ok)
+        self.textboxValue = self.textbox.text()
+        self.yt = YouTube(self.textboxValue)
+        self.yt_title = self.yt.title
+        self.title = self.yt_title.replace('|', '-')       
+        
+        if self.combo_format.currentIndex() == 0:
+            yd = self.yt.streams.get_audio_only()
+            yd.download(output_path=self.dir_path, filename=self.title + '.mp3')
+            
+
+        else:
+            yd = self.yt.streams.get_highest_resolution()
+            yd.download(output_path=self.dir_path, filename=self.title + '.mp4')
+        QMessageBox.question(self,"Downloading file", "Downloaded: " + self.title, QMessageBox.Ok, QMessageBox.Ok)
         self.textbox.setText("")
         print(self.dir_path)
             
