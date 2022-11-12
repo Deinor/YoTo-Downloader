@@ -1,7 +1,6 @@
-import sys, os
-from PyQt5.QtWidgets import QMainWindow, QApplication, QComboBox, QPushButton, QAction, QLineEdit, QMessageBox, QFileDialog, QLabel
+from sys import argv, exit
+from PyQt5.QtWidgets import QMainWindow, QApplication, QComboBox, QPushButton, QLineEdit, QMessageBox, QFileDialog, QLabel
 from PyQt5.QtGui import QFont
-from PyQt5.QtCore import pyqtSlot
 from pytube import YouTube
 
 class App(QMainWindow):
@@ -11,7 +10,7 @@ class App(QMainWindow):
         self.left = 500
         self.top = 500
         self.width = 400
-        self.height = 200
+        self.height = 210
         self.initUI()
 
     def initUI(self):
@@ -43,7 +42,7 @@ class App(QMainWindow):
 
          #Create button in the window
         self.button = QPushButton("Download file", self)
-        self.button.move(20, 140)
+        self.button.move(20, 170)
 
         #Fce con. button
         self.button_file.clicked.connect(self.click_file)
@@ -52,9 +51,9 @@ class App(QMainWindow):
         self.show()
     
     def click_file (self):
-        self.dir_path = QFileDialog.getExistingDirectory(self,"Choose Directory","C:\\Users\\deino\\Downloads")
+        self.dir_path = QFileDialog.getExistingDirectory(self,"Choose Directory","C:\\Users\\deino\\Downloads")        
 
-    @pyqtSlot()
+    #@pyqtSlot()
     def click_download (self):
 
         #Exceptions - no URL passed
@@ -72,18 +71,16 @@ class App(QMainWindow):
         self.title = self.yt_title.replace('|', '-')       
         
         if self.combo_format.currentIndex() == 0:
-            yd = self.yt.streams.get_audio_only()
-            yd.download(output_path=self.dir_path, filename=self.title + '.mp3')
-            
+            self.yd = self.yt.streams.get_audio_only()
+            self.yd.download(output_path=self.dir_path, filename=self.title + '.mp3')
 
         else:
-            yd = self.yt.streams.get_highest_resolution()
-            yd.download(output_path=self.dir_path, filename=self.title + '.mp4')
+            self.yd = self.yt.streams.get_highest_resolution()
+            self.yd.download(output_path=self.dir_path, filename=self.title + '.mp4')
         QMessageBox.question(self,"Downloading file", "Downloaded: " + self.title, QMessageBox.Ok, QMessageBox.Ok)
         self.textbox.setText("")
-        print(self.dir_path)
             
 if __name__ == '__main__':
-    app = QApplication(sys.argv)
+    app = QApplication(argv)
     ex = App()
-    sys.exit(app.exec_())
+    exit(app.exec_())
